@@ -1,10 +1,12 @@
 package com.pmt.cis.english;
 
 import android.Manifest;
+import android.content.ActivityNotFoundException;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.graphics.Color;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.CountDownTimer;
 import android.provider.Settings;
@@ -24,15 +26,19 @@ import android.widget.Toast;
 
 import java.util.ArrayList;
 import java.util.Locale;
+import java.util.Random;
 
 public class Reading extends AppCompatActivity {
 
-    int cb = 3;
-    TextView txtKQ, txtTGCB,textTGConLai,cauhientai;
-    LinearLayout layoutStart, layoutOverlay;
+    int socau = 3;
+    int intcauhientai = 0;
+    ArrayList<String> data = new ArrayList<>();
 
-    SpeechRecognizer speechRecognizer;
-    Intent speechRecognizerIntent;
+    TextView txtKQ, txtTGCB, textTGConLai, cauhientai, txtCau;
+    LinearLayout layoutStart, layoutOverlay;
+    private static final int PERMISSIONS_REQUEST_RECORD_AUDIO = 1;
+
+    private SpeechRecognizerManager mSpeechManager;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -40,137 +46,139 @@ public class Reading extends AppCompatActivity {
         setContentView(R.layout.activity_reading);
         getSupportActionBar().setTitle("Reading");
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+        getData();
+
         txtTGCB = findViewById(R.id.txtTGCB);
         textTGConLai = findViewById(R.id.textTGConLai);
         cauhientai = findViewById(R.id.cauhientai);
         txtKQ = findViewById(R.id.txtKQ);
         layoutOverlay = findViewById(R.id.layoutOverlay);
         layoutStart = findViewById(R.id.layoutStart);
-
-
-
-        speechRecognizer = SpeechRecognizer.createSpeechRecognizer(this);
-        speechRecognizerIntent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
-        speechRecognizerIntent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,
-                RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
-        speechRecognizerIntent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.getDefault());
-        speechRecognizer.setRecognitionListener(new RecognitionListener() {
-            @Override
-            public void onReadyForSpeech(Bundle params) {
-
-            }
-
-            @Override
-            public void onBeginningOfSpeech() {
-
-            }
-
-            @Override
-            public void onRmsChanged(float rmsdB) {
-
-            }
-
-            @Override
-            public void onBufferReceived(byte[] buffer) {
-
-            }
-
-            @Override
-            public void onEndOfSpeech() {
-
-            }
-
-            @Override
-            public void onError(int error) {
-
-            }
-
-            @Override
-            public void onResults(Bundle results) {
-                ArrayList<String> matches = results.getStringArrayList(SpeechRecognizer.RESULTS_RECOGNITION);
-                if (matches != null) {
-                    txtKQ.setText(matches.get(matches.size() - 1));
-                   // Toast.makeText(getApplicationContext(),String.valueOf(matches.size()),Toast.LENGTH_SHORT).show();
-                }
-            }
-
-            @Override
-            public void onPartialResults(Bundle partialResults) {
-
-            }
-
-            @Override
-            public void onEvent(int eventType, Bundle params) {
-
-            }
-        });
-
-
+        txtCau = findViewById(R.id.txtCau);
         layoutStart.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 layoutOverlay.setVisibility(View.VISIBLE);
                 layoutStart.setVisibility(View.GONE);
+
                 new CountDownTimer(4000, 1) {
 
                     public void onTick(long millisUntilFinished) {
-                            txtTGCB.setText(String.valueOf(millisUntilFinished / 1000));
+                        txtTGCB.setText(String.valueOf(millisUntilFinished / 1000));
                     }
 
                     public void onFinish() {
                         layoutOverlay.setVisibility(View.GONE);
                         txtKQ.setVisibility(View.VISIBLE);
-                        cauhientai.setText("1/15");
+                        cauhientai.setText("1/" + String.valueOf(socau));
+                        /*while (intcauhientai <= socau){*/
+                        txtKQ.setText("");
                         starRecording(10);
+                        //}
 
                     }
                 }.start();
             }
         });
-        txtKQ.setText("Test your skills and find out if ");
-        Spannable wordTwo = new SpannableString("you");
+    }
 
-        wordTwo.setSpan(new ForegroundColorSpan(Color.RED), 0, wordTwo.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-        txtKQ.append(wordTwo);
-        txtKQ.append(" are ready for the test by taking a Scored ");
+    public void getData() {
+        Intent intent = getIntent();
+        Bundle bundle = intent.getBundleExtra("data");
 
-        wordTwo = new SpannableString("Practice Test");
+        socau = bundle.getInt("socau");
+        ArrayList<String> temp = new ArrayList<>();
+        temp = bundle.getStringArrayList("data");
 
-        wordTwo.setSpan(new ForegroundColorSpan(Color.RED), 0, wordTwo.length(), Spannable.SPAN_EXCLUSIVE_EXCLUSIVE);
-        txtKQ.append(wordTwo);
 
+        if (temp.size() < socau) {
+            socau = temp.size();
+        }
+        ArrayList<Integer> tss = new ArrayList<>();
+        for (int i = 0; i < socau; i++) {
+            Random rd = new Random();
+            int number1 = rd.nextInt(temp.size());
+            while (tss.contains(number1)) {
+                number1 = rd.nextInt(temp.size());
+            }
+
+            tss.add(number1);
+            data.add(temp.get(number1));
+        }
 
     }
 
-    public void starRecording(int giay){
-        speechRecognizer.startListening(speechRecognizerIntent);
+    public void starRecording(int giay) {
+        if (mSpeechManager == null) {
+            SetSpeechListener();
+        } else if (!mSpeechManager.ismIsListening()) {
+            mSpeechManager.destroy();
+            SetSpeechListener();
+        }
+        cauhientai.setText(String.valueOf(intcauhientai + 1) + "/" + String.valueOf(socau));
+        txtCau.setText(data.get(intcauhientai));
         new CountDownTimer(giay * 1000 + 1000, 1) {
 
             public void onTick(long millisUntilFinished) {
+                // speechRecognizer.
                 textTGConLai.setText(String.valueOf(millisUntilFinished / 1000));
+                // myService.mSpeechRecognizer.
             }
 
             public void onFinish() {
-                speechRecognizer.stopListening();
+                if (mSpeechManager != null) {
+                    intcauhientai = intcauhientai + 1;
+                    mSpeechManager.destroy();
+                    mSpeechManager = null;
+                    next();
+                }
             }
         }.start();
     }
 
-    @Override
+    private void SetSpeechListener() {
+        mSpeechManager = new SpeechRecognizerManager(this, new SpeechRecognizerManager.onResultsReady() {
+            @Override
+            public void onResults(ArrayList<String> results) {
+                if (results != null && results.size() > 0) {
+                    txtKQ.append(results.get(0) + " ");
+                } else {
+                    //txtKQ.setText("KO KQ");
+                }
+
+            }
+        });
+    }
+
+    public void next() {
+        if (intcauhientai < socau) {
+            new CountDownTimer(3000, 1) {
+
+                public void onTick(long millisUntilFinished) {
+
+                }
+
+                public void onFinish() {
+                    txtKQ.setText("");
+                    starRecording(10);
+                }
+            }.start();
+        }
+
+    }
+
     public boolean onSupportNavigateUp() {
         finish();
         return true;
     }
 
-    private void checkPermission(){
-        if(Build.VERSION.SDK_INT>=Build.VERSION_CODES.M)
-            if(!(ContextCompat
-                    .checkSelfPermission(this, Manifest.permission.RECORD_AUDIO)
-                    == PackageManager.PERMISSION_GRANTED)){
-                Intent intent =new Intent(Settings.ACTION_APPLICATION_DETAILS_SETTINGS, Uri.parse("package:"+getPackageName()));
-                startActivity(intent);
-                finish();
-
-            }
+    @Override
+    protected void onPause() {
+        if (mSpeechManager != null) {
+            mSpeechManager.destroy();
+            mSpeechManager = null;
+        }
+        super.onPause();
     }
 }

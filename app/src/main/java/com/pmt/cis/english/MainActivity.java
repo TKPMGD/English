@@ -10,10 +10,16 @@ import android.os.Build;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
 import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.CompoundButton;
+import android.widget.ImageView;
+import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
+import android.widget.Spinner;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import com.nbsp.materialfilepicker.MaterialFilePicker;
@@ -26,6 +32,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.FileReader;
 import java.io.IOException;
+import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
     RelativeLayout myLayout;
@@ -39,7 +46,16 @@ public class MainActivity extends AppCompatActivity {
     String arrayName[] = {"Facebook", "Drive", "Google"};
     String myData;
     private String file = "mydata";
-
+    LinearLayout layoutCaiDat;
+    ArrayList<String> data = new ArrayList<>();
+    String arr[] = {
+            "Read",
+            "Answer question"};
+    int spinnerindex;
+    ImageView setting;
+    boolean opensetting;
+    Button choosefile;
+    TextView txtFile;
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -49,7 +65,27 @@ public class MainActivity extends AppCompatActivity {
         animationDrawable.setEnterFadeDuration(4500);
         animationDrawable.setExitFadeDuration(4500);
         animationDrawable.start();
+        spinnerindex = 0;
+        opensetting = false;
+        choosefile = findViewById(R.id.choosefile);
+        txtFile = findViewById(R.id.txtFile);
+        setting = (ImageView) findViewById(R.id.setting);
+        layoutCaiDat = findViewById(R.id.layoutCaiDat);
+        Spinner spnType = (Spinner) findViewById(R.id.spnType);
+        ArrayAdapter<String> adapter = new ArrayAdapter<String>(this, android.R.layout.simple_spinner_item, arr);
+        adapter.setDropDownViewResource(android.R.layout.simple_list_item_single_choice);
+        spnType.setAdapter(adapter);
+        spnType.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view, int position, long id) {
+                spinnerindex = position;
+            }
 
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+
+            }
+        });
         if (Build.VERSION.SDK_INT > Build.VERSION_CODES.M && checkSelfPermission(Manifest.permission.WRITE_EXTERNAL_STORAGE)
                 != PackageManager.PERMISSION_GRANTED) {
             requestPermissions(new String[]{Manifest.permission.WRITE_EXTERNAL_STORAGE}, 1001);
@@ -59,15 +95,22 @@ public class MainActivity extends AppCompatActivity {
 
         btnStart = (Button) findViewById(R.id.btnStart);
         dataPath = getData(file);
-        Toast.makeText(getApplicationContext(),
+        /*Toast.makeText(getApplicationContext(),
                 dataPath,
-                Toast.LENGTH_LONG).show();
+                Toast.LENGTH_LONG).show();*/
+        txtFile.setText(dataPath);
         btnStart.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                //chooserFile();
-                Intent intent = new Intent(MainActivity.this,Reading.class);
-                startActivity(intent);
+                data.clear();
+                if (dataPath == "" || dataPath == null) {
+                    chooserFile();
+                } else {
+                    getdata(dataPath);
+                    startLearning();
+                }
+
+
             }
         });
         ckbRemember = (CheckBox) findViewById(R.id.ckbRemember);
@@ -85,6 +128,26 @@ public class MainActivity extends AppCompatActivity {
         });
 
 
+        setting.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+
+                if (opensetting) {
+                    layoutCaiDat.setVisibility(View.GONE);
+                } else {
+                    layoutCaiDat.setVisibility(View.VISIBLE);
+                }
+
+                opensetting = !opensetting;
+            }
+        });
+
+        choosefile.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                chooserFile();
+            }
+        });
     }
 
 
@@ -176,9 +239,11 @@ public class MainActivity extends AppCompatActivity {
             if (ckbRemember.isChecked()) {
                 dataPath = filePath;
                 savePath();
+
             }
-            StringBuilder text=getdata(filePath);
-            Toast.makeText(getApplication(), text, Toast.LENGTH_SHORT).show();
+            txtFile.setText(filePath);
+            //StringBuilder text = getdata(filePath);
+            //Toast.makeText(getApplication(), text, Toast.LENGTH_SHORT).show();
             startLearning();
 
         }
@@ -194,10 +259,11 @@ public class MainActivity extends AppCompatActivity {
                 e1.printStackTrace();
             }
             String line = "";
-            StringBuilder tmp= new StringBuilder();
+            StringBuilder tmp = new StringBuilder();
             while ((line = br.readLine()) != null) {
-                tmp.append(line);
-                tmp.append("\n");
+                /*tmp.append(line);
+                tmp.append("\n");*/
+                data.add(line);
             }
             return tmp;
         } catch (IOException e) {
@@ -206,8 +272,15 @@ public class MainActivity extends AppCompatActivity {
         return null;
     }
 
-    private void startLearning(){
-        Intent intent = new Intent(this,studyingActivity.class);
+    private void startLearning() {
+        /*Intent intent = new Intent(this,studyingActivity.class);
+        startActivity(intent);*/
+
+        Bundle bundle = new Bundle();
+        bundle.putStringArrayList("data", data);
+        bundle.putInt("socau", 10);
+        Intent intent = new Intent(MainActivity.this, Reading.class);
+        intent.putExtra("data", bundle);
         startActivity(intent);
 
     }

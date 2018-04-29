@@ -42,6 +42,7 @@
                 android:layout_marginTop="10dp">
 
                 <ImageView
+                    android:id="@+id/setting"
                     android:layout_width="25dp"
                     android:layout_height="25dp"
                     android:layout_alignParentRight="true"
@@ -51,6 +52,152 @@
 
         </LinearLayout>
 
+        <LinearLayout
+            android:id="@+id/layoutCaiDat"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:background="@color/colorPrimary"
+            android:orientation="vertical"
+            android:padding="10dp"
+            android:visibility="gone">
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:orientation="horizontal"
+                android:paddingBottom="10dp"
+                android:weightSum="2">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center_vertical">
+
+                    <TextView
+                        android:id="@+id/txtType2"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:paddingRight="10dp"
+                        android:text="Type"
+                        android:textColor="@color/white" />
+
+                    <Spinner
+                        android:id="@+id/spnType"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        app:layout_constraintStart_toEndOf="@id/txtType"></Spinner>
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center_vertical">
+
+                    <TextView
+                        android:id="@+id/txtType"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:paddingRight="10dp"
+                        android:text="Limit sentences"
+                        android:textColor="@color/white" />
+
+                    <EditText
+                        android:layout_gravity="center"
+                        android:id="@+id/edtSoCau"
+                        android:inputType="number"
+                        android:layout_width="match_parent"
+                        android:layout_height="25dp"
+                        android:background="@color/white"
+                        android:gravity="center_vertical"
+                        android:maxLength="3"
+                        android:maxLines="1"
+                        android:textSize="12sp" />
+
+                </LinearLayout>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:orientation="horizontal"
+                android:weightSum="2">
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center_vertical">
+
+                    <TextView
+                        android:id="@+id/txtType23"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:paddingRight="10dp"
+                        android:text="Set Time"
+                        android:textColor="@color/white" />
+
+                    <EditText
+                        android:layout_marginEnd="30dp"
+                        android:inputType="number"
+                        android:layout_width="match_parent"
+                        android:layout_height="25dp"
+                        android:background="@color/white"
+                        android:gravity="center_vertical"
+                        android:maxLength="2"
+                        android:maxLines="1"
+                        android:textSize="12sp" />
+
+                </LinearLayout>
+
+                <LinearLayout
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:gravity="center_vertical">
+
+                    <TextView
+                        android:id="@+id/txtType22"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:paddingRight="10dp"
+                        android:text="Next sentence"
+                        android:textColor="@color/white" />
+
+                    <CheckBox
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="Auto" />
+                </LinearLayout>
+
+            </LinearLayout>
+
+            <LinearLayout
+                android:padding="4dp"
+                android:orientation="horizontal"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content">
+
+                <Button
+                    android:id="@+id/choosefile"
+                    android:text="Choose file"
+                    android:layout_width="wrap_content"
+                    android:layout_height="40dp" />
+
+                <TextView
+                    android:id="@+id/txtFile"
+                    android:textSize="12sp"
+                    android:textColor="@color/white"
+                    android:layout_gravity="center_vertical"
+                    android:gravity="center_horizontal"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content" />
+            </LinearLayout>
+        </LinearLayout>
 
 
         <RelativeLayout

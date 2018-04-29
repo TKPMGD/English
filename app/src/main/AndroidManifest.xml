@@ -24,9 +24,11 @@
             android:name=".studyingActivity"
             android:parentActivityName=".MainActivity" />
         <activity
+            android:parentActivityName=".MainActivity"
             android:name=".Reading"
             android:theme="@style/Theme.AppCompat.Light"></activity>
         <activity
+            android:parentActivityName=".MainActivity"
             android:theme="@style/Theme.AppCompat.Light"
             android:name=".Answer"></activity>
     </application>
