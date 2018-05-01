@@ -24,16 +24,19 @@ import android.widget.LinearLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import java.io.Serializable;
 import java.util.ArrayList;
 import java.util.Locale;
 import java.util.Random;
 
 public class Reading extends AppCompatActivity {
 
-    int socau = 3;
+    int socau;
     int intcauhientai = 0;
+    int time = 20;
+    int auto = 1;
     ArrayList<String> data = new ArrayList<>();
-
+    ArrayList<Result_Model> resultss = new ArrayList<>();
     TextView txtKQ, txtTGCB, textTGConLai, cauhientai, txtCau;
     LinearLayout layoutStart, layoutOverlay;
     private static final int PERMISSIONS_REQUEST_RECORD_AUDIO = 1;
@@ -46,16 +49,16 @@ public class Reading extends AppCompatActivity {
         setContentView(R.layout.activity_reading);
         getSupportActionBar().setTitle("Reading");
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-
-        getData();
-
-        txtTGCB = findViewById(R.id.txtTGCB);
         textTGConLai = findViewById(R.id.textTGConLai);
         cauhientai = findViewById(R.id.cauhientai);
         txtKQ = findViewById(R.id.txtKQ);
         layoutOverlay = findViewById(R.id.layoutOverlay);
         layoutStart = findViewById(R.id.layoutStart);
         txtCau = findViewById(R.id.txtCau);
+        txtTGCB = findViewById(R.id.txtTGCB);
+        getData();
+
+
         layoutStart.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -74,7 +77,7 @@ public class Reading extends AppCompatActivity {
                         cauhientai.setText("1/" + String.valueOf(socau));
                         /*while (intcauhientai <= socau){*/
                         txtKQ.setText("");
-                        starRecording(10);
+                        starRecording(time);
                         //}
 
                     }
@@ -86,15 +89,21 @@ public class Reading extends AppCompatActivity {
     public void getData() {
         Intent intent = getIntent();
         Bundle bundle = intent.getBundleExtra("data");
-
+        if (!bundle.getString("time").equals("")) {
+            time = Integer.parseInt(bundle.getString("time"));
+        }
+        auto = bundle.getInt("auto");
         socau = bundle.getInt("socau");
         ArrayList<String> temp = new ArrayList<>();
         temp = bundle.getStringArrayList("data");
+
+        textTGConLai.setText(String.valueOf(time));
 
 
         if (temp.size() < socau) {
             socau = temp.size();
         }
+        cauhientai.setText("0/" + String.valueOf(socau));
         ArrayList<Integer> tss = new ArrayList<>();
         for (int i = 0; i < socau; i++) {
             Random rd = new Random();
@@ -107,6 +116,7 @@ public class Reading extends AppCompatActivity {
             data.add(temp.get(number1));
         }
 
+        //int sss = 1;
     }
 
     public void starRecording(int giay) {
@@ -128,6 +138,18 @@ public class Reading extends AppCompatActivity {
 
             public void onFinish() {
                 if (mSpeechManager != null) {
+
+                    Result_Model result_model = new Result_Model();
+                    result_model.setStt(intcauhientai + 1);
+                    result_model.setNd(data.get(intcauhientai));
+                    result_model.setNddoc(txtKQ.getText().toString());
+                    if (!result_model.getNd().equals(result_model.getNddoc())) {
+                        result_model.setResult(false);
+                    } else {
+                        result_model.setResult(true);
+                    }
+
+                    resultss.add(result_model);
                     intcauhientai = intcauhientai + 1;
                     mSpeechManager.destroy();
                     mSpeechManager = null;
@@ -161,7 +183,25 @@ public class Reading extends AppCompatActivity {
 
                 public void onFinish() {
                     txtKQ.setText("");
-                    starRecording(10);
+                    starRecording(time);
+                }
+            }.start();
+        } else {
+            new CountDownTimer(3000, 1) {
+
+                public void onTick(long millisUntilFinished) {
+
+                }
+
+                public void onFinish() {
+
+                    Bundle bundle = new Bundle();
+                    bundle.putSerializable("lstresult", (Serializable) resultss);
+
+
+                    Intent intent = new Intent(Reading.this, Result.class);
+                    intent.putExtra("data",bundle);
+                    startActivity(intent);
                 }
             }.start();
         }

@@ -142,6 +142,7 @@
                         android:textColor="@color/white" />
 
                     <EditText
+                        android:id="@+id/edtTG"
                         android:layout_marginEnd="30dp"
                         android:inputType="number"
                         android:layout_width="match_parent"
@@ -169,6 +170,7 @@
                         android:textColor="@color/white" />
 
                     <CheckBox
+                        android:id="@+id/checkAuto"
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:text="Auto" />

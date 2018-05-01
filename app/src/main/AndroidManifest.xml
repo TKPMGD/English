@@ -24,13 +24,17 @@
             android:name=".studyingActivity"
             android:parentActivityName=".MainActivity" />
         <activity
-            android:parentActivityName=".MainActivity"
             android:name=".Reading"
-            android:theme="@style/Theme.AppCompat.Light"></activity>
+            android:parentActivityName=".MainActivity"
+            android:theme="@style/Theme.AppCompat.Light" />
         <activity
+            android:name=".Answer"
+            android:parentActivityName=".MainActivity"
+            android:theme="@style/Theme.AppCompat.Light" />
+        <activity android:name=".Result"
             android:parentActivityName=".MainActivity"
             android:theme="@style/Theme.AppCompat.Light"
-            android:name=".Answer"></activity>
+            ></activity>
     </application>
 
 </manifest>
