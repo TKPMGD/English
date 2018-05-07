@@ -1,6 +1,9 @@
 package com.pmt.cis.english;
 
+import android.app.Activity;
 import android.content.Context;
+import android.content.Intent;
+import android.os.Bundle;
 import android.support.annotation.NonNull;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -19,10 +22,12 @@ public class Result_Adapter extends ArrayAdapter {
 
     ArrayList<Result_Model> data = new ArrayList<>();
     private int layoutResouce;
+    Activity context;
 
-    public Result_Adapter(@NonNull Context context, int resource, ArrayList<Result_Model> data) {
+    public Result_Adapter(@NonNull Activity context, int resource, ArrayList<Result_Model> data) {
         super(context, resource);
         this.data = data;
+        this.context = context;
     }
 
     @Override
@@ -31,7 +36,7 @@ public class Result_Adapter extends ArrayAdapter {
     }
 
     @Override
-    public View getView(int position, View convertView, ViewGroup parent) {
+    public View getView(final int position, View convertView, ViewGroup parent) {
         View v;
         LayoutInflater inflater = (LayoutInflater) getContext().getSystemService(Context.LAYOUT_INFLATER_SERVICE);
         v = inflater.inflate(R.layout.item_list_result, null);
@@ -57,6 +62,20 @@ public class Result_Adapter extends ArrayAdapter {
             dungsai.setImageResource(R.drawable.incorrect);
             nddoc.setText(bl.getNddoc());
         }
+
+        again.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(getContext(), Read_Again.class);
+                Bundle bundle = new Bundle();
+                bundle.putInt("time", data.get(position).getTime());
+                bundle.putString("nd", data.get(position).getNd());
+                bundle.putInt("index", position);
+
+                intent.putExtra("data", bundle);
+                context.startActivityForResult(intent, 19);
+            }
+        });
 
         return v;
     }

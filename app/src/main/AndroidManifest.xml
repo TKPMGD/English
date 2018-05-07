@@ -31,10 +31,16 @@
             android:name=".Answer"
             android:parentActivityName=".MainActivity"
             android:theme="@style/Theme.AppCompat.Light" />
-        <activity android:name=".Result"
+        <activity
+            android:name=".Result"
             android:parentActivityName=".MainActivity"
-            android:theme="@style/Theme.AppCompat.Light"
-            ></activity>
+            android:theme="@style/Theme.AppCompat.Light" />
+        <activity
+            android:name=".Read_Again"
+            android:theme="@style/Theme.AppCompat.Light"></activity>
+        <activity
+            android:name=".Reading2"
+            android:theme="@style/Theme.AppCompat.Light"></activity>
     </application>
 
 </manifest>

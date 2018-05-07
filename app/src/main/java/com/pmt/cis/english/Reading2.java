@@ -1,36 +1,21 @@
 package com.pmt.cis.english;
 
-import android.Manifest;
-import android.content.ActivityNotFoundException;
 import android.content.Intent;
-import android.content.pm.PackageManager;
-import android.graphics.Color;
-import android.net.Uri;
-import android.os.AsyncTask;
-import android.os.Build;
 import android.os.CountDownTimer;
-import android.provider.Settings;
-import android.speech.RecognitionListener;
-import android.speech.RecognizerIntent;
-import android.speech.SpeechRecognizer;
-import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
-import android.text.Spannable;
-import android.text.SpannableString;
-import android.text.style.ForegroundColorSpan;
 import android.view.View;
+import android.widget.Button;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.io.Serializable;
 import java.util.ArrayList;
-import java.util.Locale;
 import java.util.Random;
 
-public class Reading extends AppCompatActivity {
+public class Reading2 extends AppCompatActivity {
 
+    LinearLayout layoutAgain;
     int socau;
     int intcauhientai = 0;
     int time = 20;
@@ -38,51 +23,32 @@ public class Reading extends AppCompatActivity {
     ArrayList<String> data = new ArrayList<>();
     ArrayList<Result_Model> resultss = new ArrayList<>();
     TextView txtKQ, txtTGCB, textTGConLai, cauhientai, txtCau;
-    LinearLayout layoutStart, layoutOverlay;
+    LinearLayout layoutStart, layoutOverlay, layoutTG;
     private static final int PERMISSIONS_REQUEST_RECORD_AUDIO = 1;
-
+    Button btnNext;
     private SpeechRecognizerManager mSpeechManager;
+    boolean isrepeat;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_reading);
+        setContentView(R.layout.activity_reading2);
         getSupportActionBar().setTitle("Reading");
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
+
+        layoutAgain = findViewById(R.id.layoutAgain);
+        btnNext = findViewById(R.id.btnNext);
         textTGConLai = findViewById(R.id.textTGConLai);
         cauhientai = findViewById(R.id.cauhientai);
         txtKQ = findViewById(R.id.txtKQ);
         layoutOverlay = findViewById(R.id.layoutOverlay);
+        layoutTG = findViewById(R.id.layoutTG);
         layoutStart = findViewById(R.id.layoutStart);
         txtCau = findViewById(R.id.txtCau);
         txtTGCB = findViewById(R.id.txtTGCB);
         getData();
+        isrepeat = false;
 
-
-        layoutStart.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                layoutOverlay.setVisibility(View.VISIBLE);
-                layoutStart.setVisibility(View.GONE);
-
-                new CountDownTimer(4000, 1) {
-
-                    public void onTick(long millisUntilFinished) {
-                        txtTGCB.setText(String.valueOf(millisUntilFinished / 1000));
-                    }
-
-                    public void onFinish() {
-                        layoutOverlay.setVisibility(View.GONE);
-                        txtKQ.setVisibility(View.VISIBLE);
-                        cauhientai.setText("1/" + String.valueOf(socau));
-                        /*while (intcauhientai <= socau){*/
-                        txtKQ.setText("");
-                        starRecording(time);
-                        //}
-                    }
-                }.start();
-            }
-        });
     }
 
     public void getData() {
@@ -114,10 +80,79 @@ public class Reading extends AppCompatActivity {
             data.add(temp.get(number1));
         }
 
+        layoutStart.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                layoutOverlay.setVisibility(View.VISIBLE);
+                layoutStart.setVisibility(View.GONE);
+
+                new CountDownTimer(4000, 1) {
+
+                    public void onTick(long millisUntilFinished) {
+                        txtTGCB.setText(String.valueOf(millisUntilFinished / 1000));
+                    }
+
+                    public void onFinish() {
+                        layoutOverlay.setVisibility(View.GONE);
+                        txtKQ.setVisibility(View.VISIBLE);
+                        cauhientai.setText("1/" + String.valueOf(socau));
+                        /*while (intcauhientai <= socau){*/
+                        txtKQ.setText("");
+                        starRecording(time);
+                        //}
+                    }
+                }.start();
+            }
+        });
+
         //int sss = 1;
+
+        layoutAgain.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                isrepeat = true;
+                starRecording(time);
+            }
+        });
+        btnNext.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                if (intcauhientai + 1 < socau) {
+                    intcauhientai = intcauhientai + 1;
+                    starRecording(time);
+                } else {
+                    Bundle bundle = new Bundle();
+                    bundle.putSerializable("lstresult", (Serializable) resultss);
+
+
+                    Intent intent = new Intent(Reading2.this, Result.class);
+                    intent.putExtra("data", bundle);
+                    startActivityForResult(intent, 1997);
+                    int ssss = 0;
+                }
+            }
+        });
+    }
+
+    private void SetSpeechListener() {
+        mSpeechManager = new SpeechRecognizerManager(this, new SpeechRecognizerManager.onResultsReady() {
+            @Override
+            public void onResults(ArrayList<String> results) {
+                if (results != null && results.size() > 0) {
+                    txtKQ.append(results.get(0) + " ");
+                } else {
+                    //txtKQ.setText("KO KQ");
+                }
+
+            }
+        });
     }
 
     public void starRecording(int giay) {
+        txtKQ.setText("");
+        layoutTG.setVisibility(View.VISIBLE);
+        layoutAgain.setVisibility(View.GONE);
+        btnNext.setVisibility(View.GONE);
         if (mSpeechManager == null) {
             SetSpeechListener();
         } else if (!mSpeechManager.ismIsListening()) {
@@ -125,6 +160,7 @@ public class Reading extends AppCompatActivity {
             SetSpeechListener();
         }
         cauhientai.setText(String.valueOf(intcauhientai + 1) + "/" + String.valueOf(socau));
+
         txtCau.setText(data.get(intcauhientai));
         new CountDownTimer(giay * 1000 + 1000, 1) {
 
@@ -151,77 +187,24 @@ public class Reading extends AppCompatActivity {
                         result_model.setResult(true);
                     }
 
-                    resultss.add(result_model);
-                    intcauhientai = intcauhientai + 1;
+
+                    if (isrepeat) {
+                        resultss.remove(resultss.size() - 1);
+                        resultss.add(result_model);
+                    } else {
+                        resultss.add(result_model);
+                    }
+
                     mSpeechManager.destroy();
                     mSpeechManager = null;
-                    next();
+                    layoutTG.setVisibility(View.GONE);
+                    layoutAgain.setVisibility(View.VISIBLE);
+
+                    btnNext.setVisibility(View.VISIBLE);
+                    isrepeat = false;
                 }
             }
         }.start();
-    }
-
-    private void SetSpeechListener() {
-        mSpeechManager = new SpeechRecognizerManager(this, new SpeechRecognizerManager.onResultsReady() {
-            @Override
-            public void onResults(ArrayList<String> results) {
-                if (results != null && results.size() > 0) {
-                    txtKQ.append(results.get(0) + " ");
-                } else {
-                    //txtKQ.setText("KO KQ");
-                }
-
-            }
-        });
-    }
-
-    public void next() {
-        if (intcauhientai < socau) {
-            new CountDownTimer(500, 1) {
-
-                public void onTick(long millisUntilFinished) {
-
-                }
-
-                public void onFinish() {
-                    txtKQ.setText("");
-                    starRecording(time);
-                }
-            }.start();
-        } else {
-            new CountDownTimer(500, 1) {
-
-                public void onTick(long millisUntilFinished) {
-
-                }
-
-                public void onFinish() {
-
-                    Bundle bundle = new Bundle();
-                    bundle.putSerializable("lstresult", (Serializable) resultss);
-
-
-                    Intent intent = new Intent(Reading.this, Result.class);
-                    intent.putExtra("data", bundle);
-                    startActivityForResult(intent, 1996);
-                }
-            }.start();
-        }
-
-    }
-
-    public boolean onSupportNavigateUp() {
-        finish();
-        return true;
-    }
-
-    @Override
-    protected void onPause() {
-        if (mSpeechManager != null) {
-            mSpeechManager.destroy();
-            mSpeechManager = null;
-        }
-        super.onPause();
     }
 
     @Override
@@ -239,13 +222,22 @@ public class Reading extends AppCompatActivity {
                     txtCau.setText("Test your skills and find out if you are ready for the test by taking a Scored Practice Test");
                     textTGConLai.setText(String.valueOf(time));
                     cauhientai.setText("0/" + socau);
+                    layoutAgain.setVisibility(View.GONE);
+                    layoutTG.setVisibility(View.VISIBLE);
                     txtKQ.setText("");
                     txtKQ.setVisibility(View.GONE);
                     layoutStart.setVisibility(View.VISIBLE);
                     intcauhientai = 0;
+                    isrepeat = false;
+                    btnNext.setVisibility(View.GONE);
                     getData();
                 }
             }
         }
+    }
+
+    public boolean onSupportNavigateUp() {
+        finish();
+        return true;
     }
 }

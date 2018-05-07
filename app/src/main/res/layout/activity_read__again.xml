@@ -1,0 +1,108 @@
+<?xml version="1.0" encoding="utf-8"?>
+<android.support.constraint.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    tools:context="com.pmt.cis.english.Read_Again">
+    <LinearLayout
+        android:weightSum="3"
+        android:orientation="vertical"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+        <LinearLayout
+            android:padding="20dp"
+            android:gravity="center"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1">
+            <TextView
+                android:id="@+id/txtCau"
+                android:textColor="@color/black"
+                android:gravity="center"
+                android:textStyle="bold"
+                android:textSize="20sp"
+                android:text="Test your skills and find out if you are ready for the test by taking a Scored Practice Test"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+        </LinearLayout>
+
+        <LinearLayout
+            android:gravity="center"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1">
+
+            <android.support.constraint.ConstraintLayout
+                android:layout_width="150dp"
+                android:layout_height="150dp"
+                android:background="@drawable/back_ground_cirlce"
+                >
+
+                <LinearLayout
+                    app:layout_constraintStart_toStartOf="parent"
+                    app:layout_constraintEnd_toEndOf="parent"
+                    app:layout_constraintTop_toTopOf="parent"
+                    app:layout_constraintBottom_toBottomOf="parent"
+                    android:gravity="center"
+                    android:orientation="vertical"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content">
+                    <TextView
+                        android:id="@+id/textTGConLai"
+                        android:textSize="60sp"
+                        android:textStyle="bold"
+                        app:layout_constraintBottom_toBottomOf="parent"
+                        app:layout_constraintEnd_toEndOf="parent"
+                        app:layout_constraintStart_toStartOf="parent"
+                        app:layout_constraintTop_toTopOf="parent"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:text="10" />
+                </LinearLayout>
+            </android.support.constraint.ConstraintLayout>
+        </LinearLayout>
+
+        <android.support.constraint.ConstraintLayout
+            android:id="@+id/layoutKQ"
+            android:gravity="center"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:layout_weight="1">
+            <TextView
+                android:padding="10dp"
+                android:visibility="visible"
+                app:layout_constraintStart_toStartOf="parent"
+                app:layout_constraintTop_toTopOf="parent"
+                app:layout_constraintBottom_toBottomOf="parent"
+                app:layout_constraintEnd_toEndOf="parent"
+                android:textColor="@color/black"
+                android:id="@+id/txtKQ"
+                android:gravity="center"
+                android:textStyle="bold"
+                android:textSize="20sp"
+                android:text="Test your skills and find out if you are ready for the test by taking a Scored Practice Test"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content" />
+
+        </android.support.constraint.ConstraintLayout>
+    </LinearLayout>
+
+    <LinearLayout
+        android:visibility="gone"
+        android:gravity="center"
+        android:background="@color/transparent2"
+        android:orientation="vertical"
+        android:id="@+id/layoutOverlay"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent">
+
+        <TextView
+            android:id="@+id/txtTGCB"
+            android:textColor="@color/white"
+            android:textSize="200sp"
+            android:text="3"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content" />
+    </LinearLayout>
+</android.support.constraint.ConstraintLayout>

@@ -397,9 +397,16 @@ public class MainActivity extends AppCompatActivity {
         }
 
         if (index == 1) {
-            Intent intent = new Intent(MainActivity.this, Reading.class);
-            intent.putExtra("data", bundle);
-            startActivity(intent);
+            if (data_model.getAuto() == 1) {
+                Intent intent = new Intent(MainActivity.this, Reading.class);
+                intent.putExtra("data", bundle);
+                startActivity(intent);
+            } else {
+                Intent intent = new Intent(MainActivity.this, Reading2.class);
+                intent.putExtra("data", bundle);
+                startActivity(intent);
+            }
+
         } else {
             if (index == 2) {
                 Intent intent = new Intent(MainActivity.this, Answer.class);

@@ -11,6 +11,15 @@ public class Result_Model implements Serializable {
     String nd;
     String nddoc;
     boolean result;
+    int time;
+
+    public int getTime() {
+        return time;
+    }
+
+    public void setTime(int time) {
+        this.time = time;
+    }
 
     public int getStt() {
         return stt;

@@ -29,7 +29,7 @@
     <ImageView
         android:id="@+id/dungsai"
         app:layout_constraintEnd_toStartOf="@id/againsp"
-        android:src="@drawable/incorrect"
+        android:src="@drawable/tick"
         app:layout_constraintTop_toTopOf="@id/id"
         android:layout_width="24dp"
         android:layout_height="24dp" />
