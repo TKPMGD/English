@@ -4,6 +4,7 @@ import android.content.Intent;
 import android.os.CountDownTimer;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
+import android.text.Html;
 import android.view.View;
 import android.widget.Button;
 import android.widget.LinearLayout;
@@ -15,7 +16,7 @@ import java.util.Random;
 
 public class Reading2 extends AppCompatActivity {
 
-    LinearLayout layoutAgain;
+
     int socau;
     int intcauhientai = 0;
     int time = 20;
@@ -24,11 +25,12 @@ public class Reading2 extends AppCompatActivity {
     ArrayList<Result_Model> resultss = new ArrayList<>();
     TextView txtKQ, txtTGCB, textTGConLai, cauhientai, txtCau;
     LinearLayout layoutStart, layoutOverlay, layoutTG;
+    LinearLayout layoutAgain;
     private static final int PERMISSIONS_REQUEST_RECORD_AUDIO = 1;
     Button btnNext;
     private SpeechRecognizerManager mSpeechManager;
     boolean isrepeat;
-
+    String texxt = "";
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -98,6 +100,7 @@ public class Reading2 extends AppCompatActivity {
                         cauhientai.setText("1/" + String.valueOf(socau));
                         /*while (intcauhientai <= socau){*/
                         txtKQ.setText("");
+                        texxt = "";
                         starRecording(time);
                         //}
                     }
@@ -123,7 +126,7 @@ public class Reading2 extends AppCompatActivity {
                 } else {
                     Bundle bundle = new Bundle();
                     bundle.putSerializable("lstresult", (Serializable) resultss);
-
+                    bundle.putInt("key", 1);
 
                     Intent intent = new Intent(Reading2.this, Result.class);
                     intent.putExtra("data", bundle);
@@ -134,12 +137,68 @@ public class Reading2 extends AppCompatActivity {
         });
     }
 
+    public String getResult(String rs, String text) {
+        String rss = "";
+        String[] array1 = rs.split(" ", -1);
+        String[] array2 = text.split(" ", -1);
+
+        if (array1.length < array2.length) {
+            boolean is = true;
+            String correct = "";
+            String incorrect = "";
+            for (int i = 0; i < array2.length; i++) {
+                if (i < array1.length) {
+                    if (is) {
+                        if (array2[i].toLowerCase().equals(array1[i].toLowerCase())) {
+                            correct = correct + array2[i] + " ";
+                        } else {
+                            incorrect = array2[i] + " ";
+                            is = false;
+                        }
+                    } else {
+                        incorrect = incorrect + array2[i] + " ";
+                    }
+                } else {
+                    incorrect = incorrect + array2[i] + " ";
+                }
+            }
+
+            rss = "<font color='green'>" + correct + "</font>" + "<font color='red'>" + incorrect + "</font>";
+            return rss;
+        } else {
+            boolean is = true;
+            String correct = "";
+            String incorrect = "";
+            int i;
+            for (i = 0; i < array1.length; i++) {
+                if (is) {
+                    if (array2[i].toLowerCase().equals(array1[i].toLowerCase())) {
+                        correct = correct + array2[i] + " ";
+                    } else {
+                        incorrect = array2[i] + " ";
+                        is = false;
+                    }
+                } else {
+                    incorrect = incorrect + array2[i] + " ";
+                }
+            }
+
+            for (i = i; i < array2.length; i++) {
+                incorrect = incorrect + array2[i] + " ";
+            }
+
+            rss = "<font color='green'>" + correct + "</font>" + "<font color='red'>" + incorrect + "</font>";
+            return rss;
+        }
+    }
+
     private void SetSpeechListener() {
         mSpeechManager = new SpeechRecognizerManager(this, new SpeechRecognizerManager.onResultsReady() {
             @Override
             public void onResults(ArrayList<String> results) {
                 if (results != null && results.size() > 0) {
-                    txtKQ.append(results.get(0) + " ");
+                    texxt = texxt + results.get(0) + " ";
+                    txtKQ.setText(Html.fromHtml(getResult(data.get(intcauhientai), texxt)), TextView.BufferType.SPANNABLE);
                 } else {
                     //txtKQ.setText("KO KQ");
                 }
@@ -150,6 +209,7 @@ public class Reading2 extends AppCompatActivity {
 
     public void starRecording(int giay) {
         txtKQ.setText("");
+        texxt = "";
         layoutTG.setVisibility(View.VISIBLE);
         layoutAgain.setVisibility(View.GONE);
         btnNext.setVisibility(View.GONE);
@@ -181,7 +241,7 @@ public class Reading2 extends AppCompatActivity {
                     if (result_model.getNddoc().length() > 1) {
                         result_model.setNddoc(result_model.getNddoc().substring(0, result_model.getNddoc().length() - 1));
                     }
-                    if (!result_model.getNd().equals(result_model.getNddoc())) {
+                    if (!result_model.getNd().toLowerCase().equals(result_model.getNddoc().toLowerCase())) {
                         result_model.setResult(false);
                     } else {
                         result_model.setResult(true);
@@ -225,6 +285,7 @@ public class Reading2 extends AppCompatActivity {
                     layoutAgain.setVisibility(View.GONE);
                     layoutTG.setVisibility(View.VISIBLE);
                     txtKQ.setText("");
+                    texxt = "";
                     txtKQ.setVisibility(View.GONE);
                     layoutStart.setVisibility(View.VISIBLE);
                     intcauhientai = 0;

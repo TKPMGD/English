@@ -8,39 +8,45 @@ import android.text.Html;
 import android.view.View;
 import android.widget.LinearLayout;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import java.util.ArrayList;
 
+public class Answer_Again extends AppCompatActivity {
 
-public class Read_Again extends AppCompatActivity {
-    LinearLayout layoutOverlay;
-    TextView txtKQ, txtTGCB, textTGConLai, txtCau;
+    TextView txtKQ, txtTGCB, textTGConLai, Cauhoi;
+    LinearLayout layoutStart, layoutOverlay;
+    private static final int PERMISSIONS_REQUEST_RECORD_AUDIO = 1;
+
     private SpeechRecognizerManager mSpeechManager;
-    String cau = "";
-    int index, time;
+
+    String cauhoi, cautl;
+    int index;
+    int time;
     String texxt = "";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_read__again);
-        getSupportActionBar().setTitle("Read Again");
+        setContentView(R.layout.activity_answer__again);
         getSupportActionBar().setDisplayHomeAsUpEnabled(true);
-        layoutOverlay = findViewById(R.id.layoutOverlay);
+        getSupportActionBar().setTitle("Answer");
+
+        Cauhoi = findViewById(R.id.Cauhoi);
         txtTGCB = findViewById(R.id.txtTGCB);
         textTGConLai = findViewById(R.id.textTGConLai);
-        txtCau = findViewById(R.id.txtCau);
         txtKQ = findViewById(R.id.txtKQ);
+        layoutOverlay = findViewById(R.id.layoutOverlay);
+        layoutStart = findViewById(R.id.layoutStart);
+
         Intent intent = getIntent();
         Bundle bundle = intent.getBundleExtra("data");
 
-        cau = bundle.getString("nd");
+        cauhoi = bundle.getString("nd");
+        cautl = bundle.getString("tl");
         index = bundle.getInt("index");
         time = bundle.getInt("time");
         textTGConLai.setText(String.valueOf(time));
         layoutOverlay.setVisibility(View.VISIBLE);
-        //Toast.makeText(getApplicationContext(), bundle.getString("nd"), Toast.LENGTH_SHORT).show();
 
         new CountDownTimer(2000, 1) {
 
@@ -53,6 +59,7 @@ public class Read_Again extends AppCompatActivity {
                 txtKQ.setVisibility(View.VISIBLE);
                         /*while (intcauhientai <= socau){*/
                 txtKQ.setText("");
+                texxt = "";
                 starRecording(time);
                 //}
 
@@ -122,7 +129,7 @@ public class Read_Again extends AppCompatActivity {
             public void onResults(ArrayList<String> results) {
                 if (results != null && results.size() > 0) {
                     texxt = texxt + results.get(0) + " ";
-                    txtKQ.setText(Html.fromHtml(getResult(cau, texxt)), TextView.BufferType.SPANNABLE);
+                    txtKQ.setText(Html.fromHtml(getResult(cautl, texxt)), TextView.BufferType.SPANNABLE);
                 } else {
                     //txtKQ.setText("KO KQ");
                 }
@@ -139,7 +146,7 @@ public class Read_Again extends AppCompatActivity {
             SetSpeechListener();
         }
 
-        txtCau.setText(cau);
+        Cauhoi.setText(cauhoi);
         new CountDownTimer(giay * 1000 + 1000, 1) {
 
             public void onTick(long millisUntilFinished) {
@@ -158,11 +165,15 @@ public class Read_Again extends AppCompatActivity {
                 Bundle bundle = new Bundle();
                 bundle.putInt("index", index);
                 bundle.putString("nddoc", txtKQ.getText().toString());
-
                 intent.putExtra("data", bundle);
                 setResult(2, intent); // phương thức này sẽ trả kết quả cho Activity1
                 finish(); // Đóng Activity hiện tại
             }
         }.start();
+    }
+
+    public boolean onSupportNavigateUp() {
+        finish();
+        return true;
     }
 }

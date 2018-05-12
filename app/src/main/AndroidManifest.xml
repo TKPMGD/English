@@ -37,10 +37,16 @@
             android:theme="@style/Theme.AppCompat.Light" />
         <activity
             android:name=".Read_Again"
-            android:theme="@style/Theme.AppCompat.Light"></activity>
+            android:theme="@style/Theme.AppCompat.Light" />
         <activity
             android:name=".Reading2"
-            android:theme="@style/Theme.AppCompat.Light"></activity>
+            android:theme="@style/Theme.AppCompat.Light" />
+        <activity
+            android:name=".Answer_Again"
+            android:theme="@style/Theme.AppCompat.Light" />
+        <activity
+            android:theme="@style/Theme.AppCompat.Light"
+            android:name=".Answer2"></activity>
     </application>
 
 </manifest>

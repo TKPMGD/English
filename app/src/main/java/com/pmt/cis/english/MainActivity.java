@@ -111,6 +111,7 @@ public class MainActivity extends AppCompatActivity {
 
         if (data_model.getCheck() == 1) {
             ckbRemember.setChecked(true);
+
             txtFile.setText(data_model.getLink());
             if (data_model.getType() == 1) {
                 spinnerindex = 0;
@@ -121,6 +122,9 @@ public class MainActivity extends AppCompatActivity {
             }
             edtSoCau.setText(data_model.getSentence());
             edtTG.setText(data_model.getTime());
+            if (data_model.getAuto() == 1) {
+                checkAuto.setChecked(true);
+            }
 
         } else {
             ckbRemember.setChecked(false);
@@ -167,6 +171,15 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onClick(View v) {
                 chooserFile2();
+            }
+        });
+
+        ckbRemember.setOnCheckedChangeListener(new CompoundButton.OnCheckedChangeListener() {
+            @Override
+            public void onCheckedChanged(CompoundButton buttonView, boolean isChecked) {
+                if (!isChecked) {
+                    showAlertDialog();
+                }
             }
         });
     }
@@ -226,15 +239,38 @@ public class MainActivity extends AppCompatActivity {
     private void showAlertDialog() {
         AlertDialog.Builder alertDialogBuilder =
                 new AlertDialog.Builder(MainActivity.this);
-
         alertDialogBuilder.setTitle("Clear data file location");
         alertDialogBuilder.setMessage("Are you sure?");
         // set positive button: Yes message
         alertDialogBuilder.setPositiveButton("Yes",
                 new DialogInterface.OnClickListener() {
                     public void onClick(DialogInterface dialog, int id) {
-                        clearPath();
+                        //clearPath();
 
+                        Data_Model temp = new Data_Model();
+                        temp.setLink("");
+                        temp.setCheck(0);
+                        temp.setType(0);
+                        temp.setAuto(0);
+                        temp.setSentence("0");
+                        temp.setTime("0");
+                        getDataaa.saveData(temp);
+
+                        edtSoCau.setText("");
+                        edtTG.setText("");
+                        checkAuto.setChecked(true);
+                        txtFile.setText("");
+
+                        data_model.setTime(edtTG.getText().toString());
+                        data_model.setSentence(edtSoCau.getText().toString());
+                        data_model.setType(spinnerindex + 1);
+                        if (checkAuto.isChecked()) {
+                            data_model.setAuto(1);
+                        } else {
+                            data_model.setAuto(0);
+                        }
+
+                        data_model.setLink("");
                     }
                 });
         // set negative button: No message
@@ -243,14 +279,14 @@ public class MainActivity extends AppCompatActivity {
                     public void onClick(DialogInterface dialog, int id) {
                         // cancel the alert box and put a Toast to the user
                         dialog.cancel();
-                        Toast.makeText(getApplicationContext(),
-                                "You chose a negative answer",
-                                Toast.LENGTH_LONG).show();
+                        ckbRemember.setChecked(true);
                     }
                 });
 
         AlertDialog alertDialog =
                 alertDialogBuilder.create();
+
+        alertDialog.setCancelable(false);
         alertDialog.show();
     }
 
@@ -358,7 +394,6 @@ public class MainActivity extends AppCompatActivity {
         } catch (IOException e) {
             //You'll need to add proper error handling here
         }
-
     }
 
     private StringBuilder getdata(String path) {
@@ -387,7 +422,26 @@ public class MainActivity extends AppCompatActivity {
         startActivity(intent);*/
         readData(data_model.getLink());
         Bundle bundle = new Bundle();
-        bundle.putStringArrayList("data", data);
+        if (data_model.getType() == 1) {
+            bundle.putStringArrayList("data", data);
+        } else {
+            ArrayList<Answer_Model> mdata = new ArrayList<>();
+
+            for (int i = 0; i < data.size(); i = i + 2) {
+                Answer_Model answer_model = new Answer_Model();
+                answer_model.setQuestion(data.get(i));
+                if (i + 1 >= data.size()) {
+
+                } else {
+                    answer_model.setAnswer(data.get(i + 1));
+                }
+
+                mdata.add(answer_model);
+            }
+
+            bundle.putSerializable("data", mdata);
+        }
+
         bundle.putString("time", data_model.getTime());
         bundle.putInt("auto", data_model.getAuto());
         if (edtSoCau.getText().toString().equals("")) {
@@ -409,14 +463,18 @@ public class MainActivity extends AppCompatActivity {
 
         } else {
             if (index == 2) {
-                Intent intent = new Intent(MainActivity.this, Answer.class);
-                intent.putExtra("data", bundle);
-                startActivity(intent);
+                if (data_model.getAuto() == 1) {
+                    Intent intent = new Intent(MainActivity.this, Answer.class);
+                    intent.putExtra("data", bundle);
+                    startActivity(intent);
+                } else {
+                    Intent intent = new Intent(MainActivity.this, Answer2.class);
+                    intent.putExtra("data", bundle);
+                    startActivity(intent);
+                }
+
             }
-
         }
-
-
     }
 
     private void createDB() {
