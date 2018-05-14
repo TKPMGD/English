@@ -194,9 +194,9 @@ public class Reading extends AppCompatActivity {
         } else {
             boolean is = true;
             String correct = "";
-            String incorrect = "";
+           String incorrect = "";
             int i;
-            for (i = 0; i < array1.length; i++) {
+            for (i = 0; i < array2.length; i++) {
                 if (is) {
                     if (array2[i].toLowerCase().equals(array1[i].toLowerCase())) {
                         correct = correct + array2[i] + " ";
@@ -209,9 +209,9 @@ public class Reading extends AppCompatActivity {
                 }
             }
 
-            for (i = i; i < array2.length; i++) {
+            /*for (i = i; i < array2.length; i++) {
                 incorrect = incorrect + array2[i] + " ";
-            }
+            }*/
 
             rss = "<font color='green'>" + correct + "</font>" + "<font color='red'>" + incorrect + "</font>";
             return rss;

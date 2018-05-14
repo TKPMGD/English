@@ -114,9 +114,9 @@ public class Answer_Again extends AppCompatActivity {
                 }
             }
 
-            for (i = i; i < array2.length; i++) {
+            /*for (i = i; i < array2.length; i++) {
                 incorrect = incorrect + array2[i] + " ";
-            }
+            }*/
 
             rss = "<font color='green'>" + correct + "</font>" + "<font color='red'>" + incorrect + "</font>";
             return rss;
